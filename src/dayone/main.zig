@@ -1,17 +1,14 @@
 const std = @import("std");
+const testing = std.testing;
 
 pub fn main() !void {
     std.debug.print("Day 1 2023 - Trebuchet?!\n", .{});
 
-    const exampleTotal: u16 = try calculateCalibrations("example.txt");
-    std.debug.print("Total for example is: {d}\n", .{exampleTotal});
-
-    const inputTotal: u16 = try calculateCalibrations("input.txt");
-    std.debug.print("Total for input is: {d}\n", .{inputTotal});
+    const total: u16 = try calculateCalibrations("input.txt");
+    std.debug.print("Total is: {d}\n", .{total});
 }
 
-pub fn calculateCalibrations(filename: []const u8) !u16 {
-    // const filename = "example.txt";
+fn calculateCalibrations(filename: []const u8) !u16 {
     const file = try std.fs.cwd().openFile(filename, .{});
     defer file.close();
 
@@ -42,4 +39,8 @@ pub fn calculateCalibrations(filename: []const u8) !u16 {
         total += num;
     }
     return total;
+}
+
+test "example file produces calibration of 142" {
+    try testing.expect(try calculateCalibrations("example.txt") == 142);
 }
