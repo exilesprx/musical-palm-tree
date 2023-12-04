@@ -95,6 +95,5 @@ test "include ending char" {
     const string = "random";
     const substring = string[0..string.len];
 
-    std.debug.print("len: {d}\n", .{string.len});
     try testing.expect(std.mem.eql(u8, "random", substring));
 }
