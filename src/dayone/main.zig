@@ -1,22 +1,17 @@
 const std = @import("std");
 const testing = std.testing;
 
-var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
-const allocator = arena.allocator();
-
 pub fn main() !void {
-    defer arena.deinit();
-
     std.debug.print("Day 1 2023 - Trebuchet?!\n", .{});
 
-    const total: u32 = try calculateCalibrations("input.txt");
-    std.debug.print("Total is: {d}\n", .{total});
-}
-
-fn calculateCalibrations(filename: []const u8) !u32 {
+    const filename: []const u8 = "input.txt";
     const file = try std.fs.cwd().openFile(filename, .{});
     defer file.close();
 
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+
+    const allocator = arena.allocator();
     const read_buf = try file.readToEndAlloc(allocator, 1024 * 1024);
     defer allocator.free(read_buf);
 
@@ -29,6 +24,7 @@ fn calculateCalibrations(filename: []const u8) !u32 {
         var last: u8 = 0;
         outerFor: for (line, 0..) |c, i| {
             const isDigit = std.ascii.isDigit(c);
+
             if (isDigit and first == 0) {
                 first = try std.fmt.charToDigit(c, 10);
                 break;
@@ -69,19 +65,7 @@ fn calculateCalibrations(filename: []const u8) !u32 {
 
         total += first * 10 + last;
     }
-    return total;
-}
-
-fn replaceString(string: []const u8, target: []const u8, replacement: []const u8) ![]const u8 {
-    const size = std.mem.replacementSize(u8, string, target, replacement);
-    const output = try allocator.alloc(u8, size);
-    _ = std.mem.replace(u8, string, target, replacement, output);
-    return output;
-}
-
-test "replaces text in the middle" {
-    const string = try replaceString("Hello zig world", "zig", "new");
-    try testing.expect(std.mem.eql(u8, string, "Hello new world"));
+    std.debug.print("Total is: {d}\n", .{total});
 }
 
 test "it gives me substring" {
