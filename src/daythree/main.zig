@@ -15,6 +15,21 @@ pub fn main() !void {
     const readBuf = try file.readToEndAlloc(allocator, fileStat.size);
     defer allocator.free(readBuf);
 
-    const iter = std.mem.splitSequence(u8, readBuf, "\n");
-    _ = iter;
+    var iter = std.mem.splitSequence(u8, readBuf, "\n");
+
+    var lineNum: u8 = 0;
+    var grid: [][]u8 = undefined;
+    while (iter.next()) |line| {
+        lineNum += 1;
+        for (line, 0..) |c, i| {
+            const index: u8 = @as(u8, @intCast(i));
+            grid[lineNum][index] = c;
+        }
+    }
+
+    for (grid, 0..) |line, row| {
+        for (line, 0..) |char, column| {
+            std.debug.print("row {d} column {d} value {c} \n", .{ row, column, char });
+        }
+    }
 }
